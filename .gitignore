@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+
+# Environment
+.env
+.venv/
+venv/
+env/
+
+# macOS
+.DS_Store
+
+# Node
+node_modules/
+dist/
+.next/
+
+# Large model files
+*.safetensors
+*.ckpt
+*.pt
+*.pth
+
+# Raw collected images
+data/images/*
+!data/images/.gitkeep
+
+# Keep generated demo images intentionally
