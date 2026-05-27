@@ -8,13 +8,18 @@
       {
         "reference_id": "ref_001",
         "file_path": "data/images/blue_heart_cake_01.jpg",
-        "selected_tags": ["closest_result", "color_reference"],
+        "selected_tags": [
+          "closest_result",
+          "color_reference"
+        ],
         "user_note": "전체 형태와 하늘색 색감을 참고하고 싶어요."
       },
       {
         "reference_id": "ref_002",
         "file_path": "data/images/rose_piping_01.jpg",
-        "selected_tags": ["decoration_reference"],
+        "selected_tags": [
+          "decoration_reference"
+        ],
         "user_note": "장미 파이핑 장식 느낌만 참고해 주세요."
       }
     ]
@@ -25,12 +30,24 @@
       "role_summary_ko": "최종 결과와 가장 가까운 이미지로, 하트형 케이크 형태와 부드러운 하늘색 톤을 우선 참고합니다.",
       "visual_labels": {
         "cake_shape": "heart",
-        "main_colors": ["sky_blue", "white"],
-        "accent_colors": ["light_pink"],
-        "decorations": ["shell_border", "small_center_text"],
+        "main_colors": [
+          "sky_blue",
+          "white"
+        ],
+        "accent_colors": [
+          "light_pink"
+        ],
+        "decorations": [
+          "shell_border",
+          "small_center_text"
+        ],
         "piping_style": "soft_vintage_border",
         "text_style": "small_center_text",
-        "mood_keywords": ["soft", "cute", "romantic"]
+        "mood_keywords": [
+          "soft",
+          "cute",
+          "romantic"
+        ]
       },
       "priority": "high"
     },
@@ -39,12 +56,24 @@
       "role_summary_ko": "장식 참고 이미지로, 장미 모양 파이핑의 형태와 배치감을 참고합니다.",
       "visual_labels": {
         "cake_shape": "unknown",
-        "main_colors": ["white"],
-        "accent_colors": ["pink", "green"],
-        "decorations": ["rose_piping", "leaf_piping"],
+        "main_colors": [
+          "white"
+        ],
+        "accent_colors": [
+          "pink",
+          "green"
+        ],
+        "decorations": [
+          "rose_piping",
+          "leaf_piping"
+        ],
         "piping_style": "rose_piping",
         "text_style": "none",
-        "mood_keywords": ["romantic", "handmade", "vintage"]
+        "mood_keywords": [
+          "romantic",
+          "handmade",
+          "vintage"
+        ]
       },
       "priority": "medium"
     }
@@ -55,12 +84,27 @@
       "size": "1호",
       "base_color": "sky_blue",
       "serving_count": "2-4",
-      "style_keywords": ["soft", "cute", "romantic", "vintage"]
+      "style_keywords": [
+        "soft",
+        "cute",
+        "romantic",
+        "vintage"
+      ]
     },
     "color_palette": {
-      "main_colors": ["sky_blue", "white"],
-      "accent_colors": ["light_pink", "soft_green"],
-      "avoid_colors": ["dark_red", "black", "neon"]
+      "main_colors": [
+        "sky_blue",
+        "white"
+      ],
+      "accent_colors": [
+        "light_pink",
+        "soft_green"
+      ],
+      "avoid_colors": [
+        "dark_red",
+        "black",
+        "neon"
+      ]
     },
     "decorations": [
       {
@@ -91,8 +135,18 @@
     },
     "design_constraints": {
       "overall_mood": "부드럽고 귀여운 하늘색 하트형 장미 파이핑 케이크",
-      "must_include": ["heart_shape", "sky_blue_base", "rose_piping", "small_center_message"],
-      "avoid": ["too_many_decorations", "dark_mood", "large_text", "real_flowers"]
+      "must_include": [
+        "heart_shape",
+        "sky_blue_base",
+        "rose_piping",
+        "small_center_message"
+      ],
+      "avoid": [
+        "too_many_decorations",
+        "dark_mood",
+        "large_text",
+        "real_flowers"
+      ]
     },
     "questions_for_user": [
       {
@@ -115,5 +169,9 @@
     "order_draft_path": "data/demo_orders/demo_001.json",
     "generated_image_path": "data/generated/demo_001_mockup.png",
     "comfyui_workflow_path": "comfyui_workflows/heart_cake_ipadapter_demo.json"
+  },
+  "comfyui_prompt": {
+    "positive": "single isolated custom cake, reference-inspired but not identical, heart shaped cake, main colors: sky blue, white, light pink, soft green, decoration elements: white and light pink rose piping top border, white shell border bottom edge, soft green leaf piping around roses, lettering: white small simple lettering, center lettering reading \"Happy Birthday Yuna\", style and mood: soft, cute, romantic, vintage, handmade, realistic SDXL cake design mockup, clean front-facing product photo, completely plain pure white background, no support object, no cake stand, no board, no plate, no tray",
+    "negative": "identical copy of the reference image, exact same layout, cake stand, pedestal, cake board, plate, tray, table, fabric background, props, extra objects, blurry, low quality, watermark, logo, too many decorations, dark mood, large text, real flowers, avoid colors: dark red, black, neon"
   }
 }
