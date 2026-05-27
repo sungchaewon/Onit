@@ -113,6 +113,13 @@ def extract_shape(order_draft: dict[str, Any]) -> str:
     return f"{shape_text} shaped cake"
 
 
+def is_heart_shape(order_draft: dict[str, Any]) -> bool:
+    """하트형 케이크일 때 원형으로 생성되는 것을 막기 위한 분기입니다."""
+    cake = order_draft.get("cake", {})
+    shape = cake.get("shape") or order_draft.get("cake_shape") or ""
+    return humanize_keyword(shape).lower() == "heart"
+
+
 def extract_colors(order_draft: dict[str, Any]) -> list[str]:
     cake = order_draft.get("cake", {})
     color_palette = order_draft.get("color_palette", {})
@@ -169,6 +176,9 @@ def extract_lettering(order_draft: dict[str, Any]) -> str:
         color_prefix = f"{color} " if color else ""
         return f'{color_prefix}{style}, {placement} lettering reading "{text}"'
 
+    if placement == "none" or "optional" in style:
+        return "optional tiny minimal lettering only, no birthday plaque"
+
     return f"{style}, {placement} lettering"
 
 
@@ -213,6 +223,14 @@ def build_positive_prompt(
         shape,
     ]
 
+    if is_heart_shape(order_draft):
+        prompt_parts.extend(
+            [
+                "clearly heart-shaped cake body, not a round cake",
+                "sky-blue rose cream piping covering the top surface",
+            ]
+        )
+
     if colors:
         prompt_parts.append(f"main colors: {join_keywords(colors)}")
 
@@ -245,6 +263,13 @@ def build_negative_prompt(order_draft: dict[str, Any]) -> str:
         "product photography setup",
         "gray studio background",
         "gradient background",
+        "round cake",
+        "circular cake",
+        "birthday plaque",
+        "heart plaque",
+        "large Happy Birthday text",
+        "pink rose bouquet",
+        "green leaves",
         "blurry, low quality, watermark, logo",
         "oversized lettering",
     ]
