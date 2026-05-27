@@ -1,0 +1,119 @@
+{
+  "order_id": "demo_001",
+  "service_name": "O-nit",
+  "status": "demo",
+  "input_summary": {
+    "user_description_ko": "하늘색 하트형 케이크로 해 주세요. 테두리는 장미 파이핑 느낌이면 좋겠고, 가운데에는 작은 글씨로 Happy Birthday Yuna를 넣어 주세요. 너무 화려하기보다는 부드럽고 귀여운 느낌이면 좋겠습니다.",
+    "reference_images": [
+      {
+        "reference_id": "ref_001",
+        "file_path": "data/images/blue_heart_cake_01.jpg",
+        "selected_tags": ["closest_result", "color_reference"],
+        "user_note": "전체 형태와 하늘색 색감을 참고하고 싶어요."
+      },
+      {
+        "reference_id": "ref_002",
+        "file_path": "data/images/rose_piping_01.jpg",
+        "selected_tags": ["decoration_reference"],
+        "user_note": "장미 파이핑 장식 느낌만 참고해 주세요."
+      }
+    ]
+  },
+  "reference_analysis": [
+    {
+      "reference_id": "ref_001",
+      "role_summary_ko": "최종 결과와 가장 가까운 이미지로, 하트형 케이크 형태와 부드러운 하늘색 톤을 우선 참고합니다.",
+      "visual_labels": {
+        "cake_shape": "heart",
+        "main_colors": ["sky_blue", "white"],
+        "accent_colors": ["light_pink"],
+        "decorations": ["shell_border", "small_center_text"],
+        "piping_style": "soft_vintage_border",
+        "text_style": "small_center_text",
+        "mood_keywords": ["soft", "cute", "romantic"]
+      },
+      "priority": "high"
+    },
+    {
+      "reference_id": "ref_002",
+      "role_summary_ko": "장식 참고 이미지로, 장미 모양 파이핑의 형태와 배치감을 참고합니다.",
+      "visual_labels": {
+        "cake_shape": "unknown",
+        "main_colors": ["white"],
+        "accent_colors": ["pink", "green"],
+        "decorations": ["rose_piping", "leaf_piping"],
+        "piping_style": "rose_piping",
+        "text_style": "none",
+        "mood_keywords": ["romantic", "handmade", "vintage"]
+      },
+      "priority": "medium"
+    }
+  ],
+  "structured_order": {
+    "cake": {
+      "shape": "heart",
+      "size": "1호",
+      "base_color": "sky_blue",
+      "serving_count": "2-4",
+      "style_keywords": ["soft", "cute", "romantic", "vintage"]
+    },
+    "color_palette": {
+      "main_colors": ["sky_blue", "white"],
+      "accent_colors": ["light_pink", "soft_green"],
+      "avoid_colors": ["dark_red", "black", "neon"]
+    },
+    "decorations": [
+      {
+        "type": "rose_piping",
+        "placement": "top_border",
+        "color": "white_and_light_pink",
+        "priority": "high"
+      },
+      {
+        "type": "shell_border",
+        "placement": "bottom_edge",
+        "color": "white",
+        "priority": "medium"
+      },
+      {
+        "type": "leaf_piping",
+        "placement": "around_roses",
+        "color": "soft_green",
+        "priority": "low"
+      }
+    ],
+    "message": {
+      "text": "Happy Birthday Yuna",
+      "language": "en",
+      "placement": "center",
+      "style": "small_simple_lettering",
+      "color": "white"
+    },
+    "design_constraints": {
+      "overall_mood": "부드럽고 귀여운 하늘색 하트형 장미 파이핑 케이크",
+      "must_include": ["heart_shape", "sky_blue_base", "rose_piping", "small_center_message"],
+      "avoid": ["too_many_decorations", "dark_mood", "large_text", "real_flowers"]
+    },
+    "questions_for_user": [
+      {
+        "field": "pickup_date",
+        "question_ko": "픽업 날짜와 시간이 필요합니다."
+      },
+      {
+        "field": "allergy_info",
+        "question_ko": "알레르기나 피해야 할 재료가 있는지 확인이 필요합니다."
+      }
+    ]
+  },
+  "prompt_builder_output": {
+    "positive_prompt": "heart shaped custom cake, soft sky blue buttercream base, white and light pink rose piping on the top border, delicate shell border, small centered lettering saying Happy Birthday Yuna, cute romantic vintage Korean lunchbox cake style, clean studio photo, realistic cake mockup",
+    "negative_prompt": "dark colors, black frosting, neon colors, messy piping, distorted cake shape, unreadable large text, extra words, plastic texture, low resolution, blurry image, real flowers, candles, hands, people",
+    "ipadapter_reference_id": "ref_001",
+    "notes_ko": "대표 레퍼런스는 ref_001을 사용하고, ref_002는 장미 파이핑 표현을 보조적으로 반영합니다."
+  },
+  "expected_outputs": {
+    "order_draft_path": "data/demo_orders/demo_001.json",
+    "generated_image_path": "data/generated/demo_001_mockup.png",
+    "comfyui_workflow_path": "comfyui_workflows/heart_cake_ipadapter_demo.json"
+  }
+}

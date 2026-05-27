@@ -1,0 +1,136 @@
+{
+  "schema_name": "reference_image_metadata_schema",
+  "schema_version": "0.1.0",
+  "description": "Metadata schema for O-nit custom cake reference images.",
+  "tag_options": [
+    {
+      "key": "shop_style_reference",
+      "label_ko": "가게 스타일 참고",
+      "description_ko": "가게나 브랜드의 전체적인 케이크 스타일, 마감 방식, 촬영 느낌을 참고합니다."
+    },
+    {
+      "key": "closest_result",
+      "label_ko": "가장 비슷한 결과물",
+      "description_ko": "사용자가 원하는 최종 결과와 가장 가까운 이미지입니다."
+    },
+    {
+      "key": "color_reference",
+      "label_ko": "색감 참고",
+      "description_ko": "주요 색상, 배색, 톤을 참고합니다."
+    },
+    {
+      "key": "decoration_reference",
+      "label_ko": "장식 참고",
+      "description_ko": "파이핑, 토퍼, 리본, 과일, 스프링클 등 장식 요소를 참고합니다."
+    }
+  ],
+  "reference_image": {
+    "type": "object",
+    "required": [
+      "reference_id",
+      "file_path",
+      "source_type",
+      "selected_tags",
+      "visual_labels",
+      "priority"
+    ],
+    "properties": {
+      "reference_id": {
+        "type": "string",
+        "description": "Unique ID for the reference image, such as ref_001."
+      },
+      "file_path": {
+        "type": "string",
+        "description": "Project-relative path to the image file."
+      },
+      "source_type": {
+        "type": "string",
+        "enum": ["user_upload", "sample_dataset", "generated_result"],
+        "description": "Where the image came from."
+      },
+      "selected_tags": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "enum": [
+            "shop_style_reference",
+            "closest_result",
+            "color_reference",
+            "decoration_reference"
+          ]
+        },
+        "minItems": 1,
+        "uniqueItems": true,
+        "description": "User-selected intent tags for this image."
+      },
+      "user_note": {
+        "type": "string",
+        "description": "Optional short user note about what to reference from this image."
+      },
+      "visual_labels": {
+        "type": "object",
+        "required": [
+          "cake_shape",
+          "main_colors",
+          "decorations",
+          "mood_keywords"
+        ],
+        "properties": {
+          "cake_shape": {
+            "type": "string",
+            "enum": ["round", "heart", "square", "sheet", "tiered", "unknown"]
+          },
+          "cake_size": {
+            "type": "string",
+            "description": "Optional size label, such as mini, 1호, 2호, or unknown."
+          },
+          "main_colors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Main color keywords in English."
+          },
+          "accent_colors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Secondary color keywords in English."
+          },
+          "decorations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Decoration keywords, such as rose_piping, ribbon, pearl_sprinkles."
+          },
+          "piping_style": {
+            "type": "string",
+            "description": "Piping style keyword."
+          },
+          "text_style": {
+            "type": "string",
+            "description": "Text placement or lettering style keyword."
+          },
+          "mood_keywords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Mood keywords, such as cute, clean, vintage, romantic."
+          }
+        }
+      },
+      "analysis_hint": {
+        "type": "string",
+        "description": "Instruction hint for interpreting this image."
+      },
+      "priority": {
+        "type": "string",
+        "enum": ["high", "medium", "low"],
+        "description": "How strongly this reference should affect the final design."
+      }
+    }
+  }
+}
