@@ -160,8 +160,8 @@
     ]
   },
   "prompt_builder_output": {
-    "positive_prompt": "heart shaped custom cake, soft sky blue buttercream base, white and light pink rose piping on the top border, delicate shell border, small centered lettering saying Happy Birthday Yuna, cute romantic vintage Korean lunchbox cake style, clean studio photo, realistic cake mockup",
-    "negative_prompt": "dark colors, black frosting, neon colors, messy piping, distorted cake shape, unreadable large text, extra words, plastic texture, low resolution, blurry image, real flowers, candles, hands, people",
+    "positive_prompt": "single isolated custom cake, reference-inspired but not identical, heart shaped cake, main colors: sky blue, white, light pink, soft green, decoration elements: white and light pink rose piping top border, white shell border bottom edge, soft green leaf piping around roses, lettering: white small simple lettering, center lettering reading \"Happy Birthday Yuna\", style and mood: soft, cute, romantic, vintage, handmade, clean 3D cake design mockup for order confirmation, semi-realistic but simplified, show only one cake body, isolated on a completely plain pure white background, no support object, no cake stand, no board, no plate, no tray, no table, no props",
+    "negative_prompt": "identical copy of the reference image, exact same layout, support object, cake stand, display stand, pedestal, cake board, plate, tray, table, fabric background, props, extra objects, product photography setup, gray studio background, gradient background, blurry, low quality, watermark, logo, oversized lettering, too many decorations, dark mood, real flowers, avoid colors: dark red, black, neon",
     "ipadapter_reference_id": "ref_001",
     "notes_ko": "대표 레퍼런스는 ref_001을 사용하고, ref_002는 장미 파이핑 표현을 보조적으로 반영합니다."
   },
@@ -171,7 +171,7 @@
     "comfyui_workflow_path": "comfyui_workflows/heart_cake_ipadapter_demo.json"
   },
   "comfyui_prompt": {
-    "positive": "single isolated custom cake, reference-inspired but not identical, heart shaped cake, main colors: sky blue, white, light pink, soft green, decoration elements: white and light pink rose piping top border, white shell border bottom edge, soft green leaf piping around roses, lettering: white small simple lettering, center lettering reading \"Happy Birthday Yuna\", style and mood: soft, cute, romantic, vintage, handmade, realistic SDXL cake design mockup, clean front-facing product photo, completely plain pure white background, no support object, no cake stand, no board, no plate, no tray",
-    "negative": "identical copy of the reference image, exact same layout, cake stand, pedestal, cake board, plate, tray, table, fabric background, props, extra objects, blurry, low quality, watermark, logo, too many decorations, dark mood, large text, real flowers, avoid colors: dark red, black, neon"
+    "positive": "single isolated custom cake, reference-inspired but not identical, heart shaped cake, main colors: sky blue, white, light pink, soft green, decoration elements: white and light pink rose piping top border, white shell border bottom edge, soft green leaf piping around roses, lettering: white small simple lettering, center lettering reading \"Happy Birthday Yuna\", style and mood: soft, cute, romantic, vintage, handmade, clean 3D cake design mockup for order confirmation, semi-realistic but simplified, show only one cake body, isolated on a completely plain pure white background, no support object, no cake stand, no board, no plate, no tray, no table, no props",
+    "negative": "identical copy of the reference image, exact same layout, support object, cake stand, display stand, pedestal, cake board, plate, tray, table, fabric background, props, extra objects, product photography setup, gray studio background, gradient background, blurry, low quality, watermark, logo, oversized lettering, too many decorations, dark mood, real flowers, avoid colors: dark red, black, neon"
   }
 }

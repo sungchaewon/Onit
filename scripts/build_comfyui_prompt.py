@@ -60,6 +60,26 @@ def join_keywords(values: list[Any]) -> str:
     return ", ".join(humanize_keyword(value) for value in values if str(value).strip())
 
 
+def dedupe_preserve_order(values: list[str]) -> list[str]:
+    """prompt 조각의 중복을 순서 유지 방식으로 제거합니다."""
+    seen: set[str] = set()
+    deduped: list[str] = []
+    for value in values:
+        clean_value = value.strip()
+        if clean_value and clean_value not in seen:
+            seen.add(clean_value)
+            deduped.append(clean_value)
+    return deduped
+
+
+def normalize_negative_keyword(value: Any) -> str:
+    """주문서의 avoid key를 negative prompt에 맞는 표현으로 정리합니다."""
+    keyword = humanize_keyword(value)
+    if keyword == "large text":
+        return "oversized lettering"
+    return keyword
+
+
 def get_order_sections(data: dict[str, Any]) -> dict[str, Any]:
     """요구된 key와 기존 demo key를 모두 읽어 내부 표준 구조로 정리합니다."""
     user_input = data.get("user_input") or data.get("input_summary") or {}
@@ -203,10 +223,11 @@ def build_positive_prompt(
         [
             f"lettering: {lettering}",
             f"style and mood: {join_keywords(moods) if moods else 'clean custom cake style'}",
-            "realistic SDXL cake design mockup",
-            "clean front-facing product photo",
-            "completely plain pure white background",
-            "no support object, no cake stand, no board, no plate, no tray",
+            "clean 3D cake design mockup for order confirmation",
+            "semi-realistic but simplified",
+            "show only one cake body",
+            "isolated on a completely plain pure white background",
+            "no support object, no cake stand, no board, no plate, no tray, no table, no props",
         ]
     )
 
@@ -218,16 +239,22 @@ def build_negative_prompt(order_draft: dict[str, Any]) -> str:
     negative_parts = [
         "identical copy of the reference image",
         "exact same layout",
-        "cake stand, pedestal, cake board, plate, tray, table",
+        "support object",
+        "cake stand, display stand, pedestal, cake board, plate, tray, table",
         "fabric background, props, extra objects",
+        "product photography setup",
+        "gray studio background",
+        "gradient background",
         "blurry, low quality, watermark, logo",
+        "oversized lettering",
     ]
 
     constraints = order_draft.get("design_constraints", {})
     if isinstance(constraints, dict):
-        avoid_items = join_keywords(as_list(constraints.get("avoid")))
-        if avoid_items:
-            negative_parts.append(avoid_items)
+        avoid_items = [
+            normalize_negative_keyword(item) for item in as_list(constraints.get("avoid"))
+        ]
+        negative_parts.extend(avoid_items)
 
     color_palette = order_draft.get("color_palette", {})
     if isinstance(color_palette, dict):
@@ -235,7 +262,7 @@ def build_negative_prompt(order_draft: dict[str, Any]) -> str:
         if avoid_colors:
             negative_parts.append(f"avoid colors: {avoid_colors}")
 
-    return ", ".join(negative_parts)
+    return ", ".join(dedupe_preserve_order(negative_parts))
 
 
 def update_comfyui_prompt(data: dict[str, Any]) -> dict[str, str]:
@@ -250,6 +277,12 @@ def update_comfyui_prompt(data: dict[str, Any]) -> dict[str, str]:
         "positive": positive_prompt,
         "negative": negative_prompt,
     }
+
+    # 기존 demo JSON에 남아 있는 예전 prompt 필드도 같은 값으로 맞춰 혼선을 줄입니다.
+    prompt_builder_output = data.get("prompt_builder_output")
+    if isinstance(prompt_builder_output, dict):
+        prompt_builder_output["positive_prompt"] = positive_prompt
+        prompt_builder_output["negative_prompt"] = negative_prompt
 
     return data["comfyui_prompt"]
 
