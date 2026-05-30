@@ -80,6 +80,31 @@ def normalize_negative_keyword(value: Any) -> str:
     return keyword
 
 
+def collect_text_values(value: Any) -> list[str]:
+    """중첩된 dict/list 안의 문자열을 모두 모아 조건 판단용 텍스트로 만듭니다."""
+    if value is None:
+        return []
+    if isinstance(value, str):
+        return [humanize_keyword(value)]
+    if isinstance(value, dict):
+        texts: list[str] = []
+        for child_value in value.values():
+            texts.extend(collect_text_values(child_value))
+        return texts
+    if isinstance(value, list) or isinstance(value, tuple):
+        texts = []
+        for item in value:
+            texts.extend(collect_text_values(item))
+        return texts
+    return [humanize_keyword(value)]
+
+
+def contains_any_text(value: Any, keywords: list[str]) -> bool:
+    """JSON 구조 어디에든 특정 의미의 문자열이 있는지 느슨하게 확인합니다."""
+    joined_text = " ".join(collect_text_values(value)).lower()
+    return any(keyword.lower() in joined_text for keyword in keywords)
+
+
 def get_order_sections(data: dict[str, Any]) -> dict[str, Any]:
     """요구된 key와 기존 demo key를 모두 읽어 내부 표준 구조로 정리합니다."""
     user_input = data.get("user_input") or data.get("input_summary") or {}
@@ -117,7 +142,29 @@ def is_heart_shape(order_draft: dict[str, Any]) -> bool:
     """하트형 케이크일 때 원형으로 생성되는 것을 막기 위한 분기입니다."""
     cake = order_draft.get("cake", {})
     shape = cake.get("shape") or order_draft.get("cake_shape") or ""
-    return humanize_keyword(shape).lower() == "heart"
+    shape_text = humanize_keyword(shape).lower()
+    return shape_text in ("heart", "하트")
+
+
+def has_lettering(order_draft: dict[str, Any]) -> bool:
+    """주문 초안에서 실제 문구 생성을 원하는지 판단합니다."""
+    explicit_value = order_draft.get("has_lettering")
+    if isinstance(explicit_value, bool):
+        return explicit_value
+
+    lettering_text = str(order_draft.get("lettering_text", "")).strip()
+    if lettering_text:
+        return True
+
+    message = order_draft.get("message", {})
+    if not isinstance(message, dict):
+        return False
+
+    text = str(message.get("text", "")).strip()
+    placement = humanize_keyword(message.get("placement", "")).lower()
+    style = humanize_keyword(message.get("style", "")).lower()
+
+    return bool(text) and placement != "none" and "optional" not in style
 
 
 def extract_colors(order_draft: dict[str, Any]) -> list[str]:
@@ -125,6 +172,7 @@ def extract_colors(order_draft: dict[str, Any]) -> list[str]:
     color_palette = order_draft.get("color_palette", {})
 
     colors: list[Any] = []
+    colors.extend(as_list(order_draft.get("main_colors")))
     colors.extend(as_list(color_palette.get("main_colors")))
     colors.extend(as_list(cake.get("base_color")))
     colors.extend(as_list(color_palette.get("accent_colors")))
@@ -142,7 +190,9 @@ def extract_colors(order_draft: dict[str, Any]) -> list[str]:
 
 
 def extract_decorations(order_draft: dict[str, Any]) -> list[str]:
-    decorations = order_draft.get("decorations", [])
+    decorations = order_draft.get("decorations") or order_draft.get(
+        "decoration_elements", []
+    )
     decoration_phrases: list[str] = []
 
     for decoration in as_list(decorations):
@@ -162,10 +212,21 @@ def extract_decorations(order_draft: dict[str, Any]) -> list[str]:
 
 
 def extract_lettering(order_draft: dict[str, Any]) -> str:
+    """레터링이 실제로 필요한 주문일 때만 positive prompt 문구를 만듭니다."""
+    if not has_lettering(order_draft):
+        return ""
+
+    lettering_text = str(order_draft.get("lettering_text", "")).strip()
+    if lettering_text:
+        position = humanize_keyword(order_draft.get("lettering_position", "top center"))
+        color = humanize_keyword(order_draft.get("lettering_color", ""))
+        color_prefix = f"{color} " if color else ""
+        return f'{color_prefix}{position} lettering reading "{lettering_text}"'
+
     message = order_draft.get("message", {})
 
     if not isinstance(message, dict) or not message:
-        return "minimal optional lettering"
+        return ""
 
     text = message.get("text")
     placement = humanize_keyword(message.get("placement", "center"))
@@ -175,9 +236,6 @@ def extract_lettering(order_draft: dict[str, Any]) -> str:
     if text:
         color_prefix = f"{color} " if color else ""
         return f'{color_prefix}{style}, {placement} lettering reading "{text}"'
-
-    if placement == "none" or "optional" in style:
-        return "optional tiny minimal lettering only, no birthday plaque"
 
     return f"{style}, {placement} lettering"
 
@@ -214,7 +272,6 @@ def build_positive_prompt(
     shape = extract_shape(order_draft)
     colors = extract_colors(order_draft)
     decorations = extract_decorations(order_draft)
-    lettering = extract_lettering(order_draft)
     moods = extract_mood(order_draft, reference_analysis)
 
     prompt_parts = [
@@ -237,9 +294,12 @@ def build_positive_prompt(
     if decorations:
         prompt_parts.append(f"decoration elements: {join_keywords(decorations)}")
 
+    lettering = extract_lettering(order_draft)
+    if lettering:
+        prompt_parts.append(f"lettering: {lettering}")
+
     prompt_parts.extend(
         [
-            f"lettering: {lettering}",
             f"style and mood: {join_keywords(moods) if moods else 'clean custom cake style'}",
             "clean 3D cake design mockup for order confirmation",
             "semi-realistic but simplified",
@@ -252,51 +312,138 @@ def build_positive_prompt(
     return ", ".join(prompt_parts)
 
 
-def build_negative_prompt(order_draft: dict[str, Any]) -> str:
-    """고정 제외 요소와 주문서의 avoid 항목을 합쳐 negative prompt를 만듭니다."""
-    negative_parts = [
-        "identical copy of the reference image",
-        "exact same layout",
+def get_base_negative_terms() -> list[str]:
+    """모든 케이크 생성에 항상 적용하는 공통 negative term입니다."""
+    return [
+        "cake stand",
+        "pedestal",
         "support object",
-        "cake stand, display stand, pedestal, cake board, plate, tray, table",
-        "fabric background, props, extra objects",
-        "product photography setup",
+        "cake board",
+        "plate",
+        "tray",
+        "table",
+        "fabric background",
+        "cloth",
+        "props",
+        "extra objects",
+        "background objects",
+        "multiple cakes",
+        "hands",
+        "people",
+        "watermark",
+        "logo",
+        "blurry",
+        "low quality",
         "gray studio background",
         "gradient background",
-        "round cake",
-        "circular cake",
-        "birthday plaque",
-        "heart plaque",
-        "large Happy Birthday text",
-        "pink rose bouquet",
-        "green leaves",
-        "blurry, low quality, watermark, logo",
-        "oversized lettering",
+        "pattern background",
+        "product photography setup",
     ]
+
+
+def has_rose_piping_context(
+    order_draft: dict[str, Any], reference_analysis: list[Any]
+) -> bool:
+    """주문 또는 레퍼런스 분석에 장미 크림 파이핑 맥락이 있는지 확인합니다."""
+    decoration_context = {
+        "decorations": order_draft.get("decorations"),
+        "decoration_elements": order_draft.get("decoration_elements"),
+        "reference_analysis": reference_analysis,
+    }
+    return contains_any_text(
+        decoration_context,
+        ["rose piping", "rose cream piping", "장미 파이핑", "cream rose"],
+    )
+
+
+def has_reference_copy_risk(
+    order_draft: dict[str, Any], reference_metadata: Any
+) -> bool:
+    """레퍼런스를 참고하되 그대로 복제하지 말아야 하는 상황인지 판단합니다."""
+    special_context = {
+        "special_requests": order_draft.get("special_requests"),
+        "composition_summary": order_draft.get("composition_summary"),
+    }
+
+    has_reference_metadata = bool(reference_metadata)
+    has_not_identical_request = contains_any_text(
+        special_context,
+        ["not identical", "복제하지", "참고만"],
+    )
+
+    return has_reference_metadata or has_not_identical_request
+
+
+def get_conditional_negative_terms(
+    order_draft: dict[str, Any],
+    reference_analysis: list[Any],
+    reference_metadata: Any,
+) -> list[str]:
+    """order_draft와 레퍼런스 정보에 따라 추가할 negative term을 만듭니다."""
+    terms: list[str] = []
+
+    if is_heart_shape(order_draft):
+        terms.extend(["round cake", "circular cake"])
+
+    if has_rose_piping_context(order_draft, reference_analysis):
+        terms.extend(["single large rose", "one big flower"])
+
+    if has_lettering(order_draft):
+        terms.extend(["oversized lettering", "unreadable lettering", "misspelled text"])
+    else:
+        terms.extend(["text", "lettering", "words", "typography"])
+
+    if has_reference_copy_risk(order_draft, reference_metadata):
+        terms.extend(
+            [
+                "identical copy of the reference image",
+                "exact same layout",
+                "copied design",
+            ]
+        )
 
     constraints = order_draft.get("design_constraints", {})
     if isinstance(constraints, dict):
         avoid_items = [
             normalize_negative_keyword(item) for item in as_list(constraints.get("avoid"))
         ]
-        negative_parts.extend(avoid_items)
+        terms.extend(avoid_items)
 
     color_palette = order_draft.get("color_palette", {})
     if isinstance(color_palette, dict):
         avoid_colors = join_keywords(as_list(color_palette.get("avoid_colors")))
         if avoid_colors:
-            negative_parts.append(f"avoid colors: {avoid_colors}")
+            terms.append(f"avoid colors: {avoid_colors}")
 
-    return ", ".join(dedupe_preserve_order(negative_parts))
+    return terms
+
+
+def build_negative_prompt(
+    order_draft: dict[str, Any],
+    reference_analysis: list[Any],
+    reference_metadata: Any,
+) -> str:
+    """base negative 뒤에 조건부 negative를 붙이고 중복 term을 제거합니다."""
+    base_negative_terms = get_base_negative_terms()
+    conditional_negative_terms = get_conditional_negative_terms(
+        order_draft, reference_analysis, reference_metadata
+    )
+
+    return ", ".join(
+        dedupe_preserve_order(base_negative_terms + conditional_negative_terms)
+    )
 
 
 def update_comfyui_prompt(data: dict[str, Any]) -> dict[str, str]:
     sections = get_order_sections(data)
     order_draft = sections["order_draft"]
     reference_analysis = sections["reference_analysis"]
+    reference_metadata = sections["reference_metadata"]
 
     positive_prompt = build_positive_prompt(order_draft, reference_analysis)
-    negative_prompt = build_negative_prompt(order_draft)
+    negative_prompt = build_negative_prompt(
+        order_draft, reference_analysis, reference_metadata
+    )
 
     data["comfyui_prompt"] = {
         "positive": positive_prompt,

@@ -1,0 +1,31 @@
+{
+  "order_id": "demo_001",
+  "user_input": {
+    "lettering_text": "HBD!",
+    "size_and_flavor": "1호 / 바닐라시트 + 우유생크림",
+    "additional_requests": "연두색 키치한 느낌, 너무 화려하지 않게"
+  },
+  "reference_metadata": [
+    {
+      "image_id": "ref_001",
+      "image_path": "data/images/raw/레터링:큐티2.jpeg",
+      "is_store_reference": false,
+      "is_closest_reference": true,
+      "reference_role": "closest_result",
+      "selected_tags": [
+        "closest_result",
+        "color_reference"
+      ]
+    },
+    {
+      "image_id": "ref_002",
+      "image_path": "data/images/레터링:키치:심플.jpeg",
+      "is_store_reference": false,
+      "is_closest_reference": false,
+      "reference_role": "decoration_reference",
+      "selected_tags": [
+        "decoration_reference"
+      ]
+    }
+  ]
+}

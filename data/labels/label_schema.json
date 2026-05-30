@@ -1,7 +1,11 @@
 {
   "schema_name": "reference_image_metadata_schema",
-  "schema_version": "0.1.0",
-  "description": "Metadata schema for O-nit custom cake reference images.",
+  "schema_version": "0.2.0",
+  "description": "Metadata schema for O-nit reference images attached to an initial order input.",
+  "constraints": {
+    "min_reference_images": 1,
+    "max_reference_images": 4
+  },
   "tag_options": [
     {
       "key": "shop_style_reference",
@@ -24,29 +28,43 @@
       "description_ko": "파이핑, 토퍼, 리본, 과일, 스프링클 등 장식 요소를 참고합니다."
     }
   ],
-  "reference_image": {
+  "reference_metadata_item": {
     "type": "object",
     "required": [
-      "reference_id",
-      "file_path",
-      "source_type",
-      "selected_tags",
-      "visual_labels",
-      "priority"
+      "image_id",
+      "image_path",
+      "is_store_reference",
+      "is_closest_reference",
+      "reference_role",
+      "selected_tags"
     ],
     "properties": {
-      "reference_id": {
+      "image_id": {
         "type": "string",
         "description": "Unique ID for the reference image, such as ref_001."
       },
-      "file_path": {
+      "image_path": {
         "type": "string",
-        "description": "Project-relative path to the image file."
+        "description": "Project-relative path to the reference image file."
       },
-      "source_type": {
+      "is_store_reference": {
+        "type": "boolean",
+        "description": "Whether this image is used as a store style reference."
+      },
+      "is_closest_reference": {
+        "type": "boolean",
+        "description": "Whether this image is the closest reference for the desired result."
+      },
+      "reference_role": {
         "type": "string",
-        "enum": ["user_upload", "sample_dataset", "generated_result"],
-        "description": "Where the image came from."
+        "enum": [
+          "shop_style_reference",
+          "closest_result",
+          "color_reference",
+          "decoration_reference",
+          "general_reference"
+        ],
+        "description": "Primary role of this reference image."
       },
       "selected_tags": {
         "type": "array",
@@ -62,74 +80,6 @@
         "minItems": 1,
         "uniqueItems": true,
         "description": "User-selected intent tags for this image."
-      },
-      "user_note": {
-        "type": "string",
-        "description": "Optional short user note about what to reference from this image."
-      },
-      "visual_labels": {
-        "type": "object",
-        "required": [
-          "cake_shape",
-          "main_colors",
-          "decorations",
-          "mood_keywords"
-        ],
-        "properties": {
-          "cake_shape": {
-            "type": "string",
-            "enum": ["round", "heart", "square", "sheet", "tiered", "unknown"]
-          },
-          "cake_size": {
-            "type": "string",
-            "description": "Optional size label, such as mini, 1호, 2호, or unknown."
-          },
-          "main_colors": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Main color keywords in English."
-          },
-          "accent_colors": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Secondary color keywords in English."
-          },
-          "decorations": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Decoration keywords, such as rose_piping, ribbon, pearl_sprinkles."
-          },
-          "piping_style": {
-            "type": "string",
-            "description": "Piping style keyword."
-          },
-          "text_style": {
-            "type": "string",
-            "description": "Text placement or lettering style keyword."
-          },
-          "mood_keywords": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Mood keywords, such as cute, clean, vintage, romantic."
-          }
-        }
-      },
-      "analysis_hint": {
-        "type": "string",
-        "description": "Instruction hint for interpreting this image."
-      },
-      "priority": {
-        "type": "string",
-        "enum": ["high", "medium", "low"],
-        "description": "How strongly this reference should affect the final design."
       }
     }
   }
