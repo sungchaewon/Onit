@@ -1,0 +1,152 @@
+{
+  "workflow_name": "sdxl_ipadapter_cake_mockup_template",
+  "workflow_type": "comfyui_api_prompt_template",
+  "prototype_note": "실시간 ComfyUI API 호출 전 단계에서 사용하는 SDXL + IPAdapter용 데모 workflow template입니다. 실제 ComfyUI 환경에서는 설치된 IPAdapter custom node 이름과 checkpoint 파일명에 맞게 수정해야 합니다.",
+  "placeholders": {
+    "__POSITIVE_PROMPT__": "scripts/build_comfyui_prompt.py가 생성한 positive prompt",
+    "__NEGATIVE_PROMPT__": "scripts/build_comfyui_prompt.py가 생성한 negative prompt",
+    "__REFERENCE_IMAGE__": "IPAdapter가 참고할 대표 레퍼런스 이미지 파일명",
+    "__OUTPUT_PREFIX__": "저장할 출력 이미지 prefix"
+  },
+  "recommended_settings": {
+    "model_family": "SDXL",
+    "image_width": 1024,
+    "image_height": 1024,
+    "steps": 28,
+    "cfg": 6.5,
+    "sampler_name": "dpmpp_2m",
+    "scheduler": "karras",
+    "ipadapter_weight": 0.65,
+    "ipadapter_weight_type": "linear",
+    "denoise": 1.0
+  },
+  "prompt": {
+    "1": {
+      "class_type": "CheckpointLoaderSimple",
+      "inputs": {
+        "ckpt_name": "sd_xl_base_1.0.safetensors"
+      }
+    },
+    "2": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "1",
+          1
+        ],
+        "text": "__POSITIVE_PROMPT__"
+      }
+    },
+    "3": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "1",
+          1
+        ],
+        "text": "__NEGATIVE_PROMPT__"
+      }
+    },
+    "4": {
+      "class_type": "LoadImage",
+      "inputs": {
+        "image": "__REFERENCE_IMAGE__"
+      }
+    },
+    "5": {
+      "class_type": "CLIPVisionLoader",
+      "inputs": {
+        "clip_name": "CLIP-ViT-H-14-laion2B-s32B-b79K.safetensors"
+      }
+    },
+    "6": {
+      "class_type": "IPAdapterModelLoader",
+      "inputs": {
+        "ipadapter_file": "ip-adapter_sdxl_vit-h.safetensors"
+      }
+    },
+    "7": {
+      "class_type": "IPAdapterAdvanced",
+      "inputs": {
+        "model": [
+          "1",
+          0
+        ],
+        "ipadapter": [
+          "6",
+          0
+        ],
+        "image": [
+          "4",
+          0
+        ],
+        "clip_vision": [
+          "5",
+          0
+        ],
+        "weight": 0.65,
+        "weight_type": "linear",
+        "start_at": 0.0,
+        "end_at": 0.75
+      }
+    },
+    "8": {
+      "class_type": "EmptyLatentImage",
+      "inputs": {
+        "width": 1024,
+        "height": 1024,
+        "batch_size": 1
+      }
+    },
+    "9": {
+      "class_type": "KSampler",
+      "inputs": {
+        "model": [
+          "7",
+          0
+        ],
+        "positive": [
+          "2",
+          0
+        ],
+        "negative": [
+          "3",
+          0
+        ],
+        "latent_image": [
+          "8",
+          0
+        ],
+        "seed": 123456789,
+        "steps": 28,
+        "cfg": 6.5,
+        "sampler_name": "dpmpp_2m",
+        "scheduler": "karras",
+        "denoise": 1.0
+      }
+    },
+    "10": {
+      "class_type": "VAEDecode",
+      "inputs": {
+        "samples": [
+          "9",
+          0
+        ],
+        "vae": [
+          "1",
+          2
+        ]
+      }
+    },
+    "11": {
+      "class_type": "SaveImage",
+      "inputs": {
+        "images": [
+          "10",
+          0
+        ],
+        "filename_prefix": "__OUTPUT_PREFIX__"
+      }
+    }
+  }
+}
