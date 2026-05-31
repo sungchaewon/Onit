@@ -369,6 +369,7 @@ textarea:focus {
 }
 
 .popular-grid button {
+  grid-column: span 2;
   min-height: 0;
   height: 100%;
   padding: 0;
@@ -377,14 +378,6 @@ textarea:focus {
   background: #fffdfa;
   overflow: hidden;
   position: relative;
-}
-
-.popular-grid button:nth-child(-n + 3) {
-  grid-column: span 2;
-}
-
-.popular-grid button:nth-child(n + 4) {
-  grid-column: span 3;
 }
 
 .popular-grid img {
@@ -470,12 +463,18 @@ textarea:focus {
   cursor: default;
 }
 
+.preview-card header button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
 .order-form {
   padding: 16px 18px;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: minmax(170px, 1.2fr) minmax(96px, 0.7fr) minmax(112px, 0.75fr);
   gap: 16px 18px;
-  align-content: start;
+  align-content: stretch;
   min-height: 0;
   overflow: auto;
 }
@@ -488,6 +487,9 @@ textarea:focus {
 .order-form section {
   padding-bottom: 14px;
   border-bottom: 1px solid #f0e8e0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .order-form section:nth-last-child(-n + 2) {
@@ -500,31 +502,32 @@ textarea:focus {
   display: block;
   margin-bottom: 9px;
   color: #6d5b50;
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 900;
 }
 
 .order-form label b {
   display: inline-block;
   margin-left: 5px;
-  padding: 2px 6px;
+  padding: 3px 7px;
   border-radius: 4px;
   background: #fcebeb;
   color: #a32d2d;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .order-form label span {
   display: inline-block;
   margin-left: 5px;
   color: #aaa09a;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 800;
 }
 
 .upload-area {
   width: 100%;
-  min-height: 102px;
+  flex: 1;
+  min-height: 116px;
   border: 1px dashed #d9cfc7;
   border-radius: 12px;
   background: #fffaf4;
@@ -544,8 +547,10 @@ textarea:focus {
 
 .photo-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(86px, 1fr));
   gap: 10px;
+  flex: 1;
+  align-content: start;
 }
 
 .photo-slot,
@@ -570,11 +575,11 @@ textarea:focus {
   left: 6px;
   right: 6px;
   bottom: 6px;
-  padding: 4px 6px;
+  padding: 5px 7px;
   border-radius: 999px;
   background: rgba(255, 253, 248, 0.9);
   color: #6b2e42;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
   text-align: center;
 }
@@ -606,11 +611,11 @@ textarea:focus {
 }
 
 .tag-row span {
-  padding: 6px 10px;
+  padding: 7px 11px;
   border-radius: 999px;
   background: #fbeaf0;
   color: #8e3151;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 850;
 }
 
@@ -619,17 +624,18 @@ textarea:focus {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  align-content: start;
 }
 
 .segmented button,
 .size-row button {
-  min-height: 42px;
-  padding: 0 14px;
+  min-height: 46px;
+  padding: 0 16px;
   border: 1px solid #ddd2c8;
   border-radius: 8px;
   background: #fffdfa;
   color: #7c7069;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 800;
 }
 
@@ -646,10 +652,14 @@ textarea:focus {
 
 .additional-section {
   grid-column: 1 / -1;
+  padding-top: 4px;
+  justify-content: flex-start;
 }
 
 .additional-section textarea {
-  min-height: 132px;
+  flex: 0 1 auto;
+  min-height: 96px;
+  margin-bottom: 12px;
 }
 
 .live-grid {

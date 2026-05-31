@@ -24,6 +24,10 @@ def build_demo_input() -> dict[str, Any]:
     """초기 UI에서 받는 실제 입력 형태에 맞춘 demo payload를 만듭니다."""
     return {
         "order_id": "demo_001",
+        "shop_selection": {
+            "shop_id": "nuni_cake",
+            "shop_name": "누니케이크",
+        },
         "user_input": {
             "lettering_text": "HBD!",
             "size_and_flavor": "1호 / 바닐라시트 + 우유생크림",

@@ -9,6 +9,7 @@ import popularFlowerChic from "./assets/popular_02.jpeg";
 import popularLetteringCutie from "./assets/popular_03.jpeg";
 import popularLetteringKitschTrend from "./assets/popular_04.jpeg";
 import popularRollCharacter from "./assets/popular_05.jpeg";
+import popularFlowerChicSixth from "./assets/popular_06.jpeg";
 import "./styles.css";
 
 const SHOPS = [
@@ -44,6 +45,22 @@ const SHOPS = [
     rating: "4.7",
     instagram: "https://www.instagram.com/homeme.cake",
   },
+  {
+    id: 5,
+    name: "카페선",
+    location: "김포 장기동",
+    tag: "#과일케이크 #조각케이크 #제철과일",
+    rating: "4.7",
+    instagram: "https://www.instagram.com/cafe_thesun/",
+  },
+  {
+    id: 6,
+    name: "파티세리 송버드",
+    location: "서울 강남구",
+    tag: "#파인디저트 #시즌디저트 #파블로바",
+    rating: "4.5",
+    instagram: "https://www.instagram.com/patisserie.songbird/",
+  },
 ];
 
 const POPULAR = [
@@ -52,6 +69,7 @@ const POPULAR = [
   { rank: 3, image: popularLetteringCutie, label: "레터링 큐티" },
   { rank: 4, image: popularLetteringKitschTrend, label: "키치 트렌드" },
   { rank: 5, image: popularRollCharacter, label: "롤케익 캐릭터" },
+  { rank: 6, image: popularFlowerChicSixth, label: "생화 시크" },
 ];
 
 const PICKUP_SCHEDULE = [
@@ -89,12 +107,23 @@ function formatValue(value) {
   return value || "-";
 }
 
+function getPickupDaysForMonth(month) {
+  return PICKUP_SCHEDULE.reduce((days, pickup) => {
+    const match = pickup.date.match(/^(\d{2})\.(\d{2})/);
+    if (!match) return days;
+
+    const pickupMonth = Number(match[1]) - 1;
+    const pickupDay = Number(match[2]);
+    return pickupMonth === month ? [...days, pickupDay] : days;
+  }, []);
+}
+
 function Calendar({ year, month, onPrev, onNext }) {
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const today = new Date();
   const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
-  const pickupDays = month === 4 ? [31] : [];
+  const pickupDays = getPickupDaysForMonth(month);
   const cells = [...Array(firstDay).fill(null), ...Array.from({ length: daysInMonth }, (_, index) => index + 1)];
 
   return (
@@ -158,6 +187,7 @@ function CakeOrderApp() {
   const [coolerPacking, setCoolerPacking] = useState(false);
   const [qty, setQty] = useState(1);
   const [previewReady, setPreviewReady] = useState(true);
+  const [designGenerated, setDesignGenerated] = useState(false);
   const [toast, setToast] = useState("");
 
   const showToast = (message) => {
@@ -196,17 +226,24 @@ function CakeOrderApp() {
   };
 
   const regenDesign = () => {
+    if (!canGenerateDesign) {
+      showToast("필수 주문서 항목을 먼저 입력해주세요");
+      return;
+    }
+
     setPreviewReady(false);
-    showToast("도안을 다시 생성합니다");
+    setDesignGenerated(false);
+    showToast(designGenerated ? "도안을 다시 생성합니다" : "도안을 생성합니다");
     window.setTimeout(() => {
       setPreviewReady(true);
+      setDesignGenerated(true);
       showToast("새 도안이 생성되었습니다");
     }, 1100);
   };
 
   const submitOrder = () => {
     if (!isOrderReady) {
-      showToast("필수 항목을 먼저 입력해주세요");
+      showToast("예상 도안 생성과 픽업 일시 입력까지 완료해주세요");
       return;
     }
     showToast("주문서가 제출되었습니다");
@@ -216,7 +253,27 @@ function CakeOrderApp() {
   const summaryParts = [selectedShopData?.name, selectedSize, reason === "기타" ? reasonOther : reason].filter(Boolean);
   const hasReason = reason && (reason !== "기타" || reasonOther.trim());
   const hasLetteringInput = !lettering || letteringText.trim();
-  const isOrderReady = Boolean(formActive && selectedShop && photos.length > 0 && selectedSize && hasReason && hasLetteringInput);
+  const hasPickupDatetime = Boolean(pickupDatetime);
+  const canGenerateDesign = Boolean(
+    formActive &&
+      selectedShop &&
+      photos.length > 0 &&
+      selectedSize &&
+      hasReason &&
+      hasLetteringInput,
+  );
+  const isOrderReady = Boolean(canGenerateDesign && designGenerated && hasPickupDatetime);
+  const orderStatusMessage = !formActive
+    ? "가게에서 주문서 작성하기를 눌러주세요"
+    : !canGenerateDesign
+      ? "필수 항목을 입력하면 도안을 만들 수 있습니다"
+    : !designGenerated
+      ? "예상 도안을 만든 뒤 픽업 일시를 입력하면 제출할 수 있습니다"
+      : !hasPickupDatetime
+        ? "픽업 일시를 입력하면 제출할 수 있습니다"
+        : summaryParts.length
+          ? summaryParts.join(" · ")
+          : "필수 항목을 입력하면 주문서 제출이 활성화됩니다";
 
   return (
     <div className="app-shell">
@@ -298,15 +355,17 @@ function CakeOrderApp() {
                   <span>{shop.tag}</span>
                   {selectedShop === shop.id && (
                     <div className="shop-actions">
-                      <button
-                        type="button"
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          window.open(shop.instagram, "_blank", "noopener,noreferrer");
-                        }}
-                      >
-                        인스타 보기
-                      </button>
+                      {shop.instagram && (
+                        <button
+                          type="button"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            window.open(shop.instagram, "_blank", "noopener,noreferrer");
+                          }}
+                        >
+                          인스타 보기
+                        </button>
+                      )}
                       <button
                         type="button"
                         className="pink"
@@ -325,7 +384,7 @@ function CakeOrderApp() {
           </section>
 
           <section className="side-section popular-section">
-            <h2>월간 인기 디자인 TOP5</h2>
+            <h2>월간 인기 디자인 TOP6</h2>
             <div className="popular-grid">
               {POPULAR.map((item) => (
                 <button type="button" key={item.rank} onClick={() => showToast(`${item.label} 디자인 상세보기`)}>
@@ -457,8 +516,8 @@ function CakeOrderApp() {
             <article className="preview-card">
               <header>
                 <h2>예상 도안</h2>
-                <button type="button" onClick={regenDesign}>
-                  다시 만들기
+                <button type="button" disabled={!canGenerateDesign} onClick={regenDesign}>
+                  {designGenerated ? "다시 만들기" : "도안 만들기"}
                 </button>
               </header>
               <div className={`preview-frame ${previewReady ? "ready" : ""}`}>
@@ -502,7 +561,7 @@ function CakeOrderApp() {
                   <span>개</span>
                 </div>
               )}
-              <p className="order-hint">{summaryParts.length ? summaryParts.join(" · ") : "필수 항목을 입력하면 주문서 제출이 활성화됩니다"}</p>
+              <p className="order-hint">{orderStatusMessage}</p>
             </article>
           </div>
         </section>

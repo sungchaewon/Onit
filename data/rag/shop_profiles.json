@@ -1,0 +1,44 @@
+{
+  "shops": [
+    {
+      "shop_id": "nuni_cake",
+      "shop_name": "누니케이크",
+      "location": "서울 강북구",
+      "style_keywords": ["heart_snow", "simple", "pastel", "cute"],
+      "preferred_colors": ["sky_blue", "white", "pastel_tone"],
+      "available_options": ["heart_cake", "lettering_cake", "cream_piping"],
+      "constraints": ["avoid_overly_complex_decoration", "keep_design_simple"],
+      "retrieval_notes": "하트형, 파스텔톤, 심플한 디자인을 우선 참고하는 데모용 가게 프로필입니다."
+    },
+    {
+      "shop_id": "butter_moong",
+      "shop_name": "버터뭉",
+      "location": "서울 종로구",
+      "style_keywords": ["character", "mini_cake", "playful"],
+      "preferred_colors": ["bright_color", "pastel_tone"],
+      "available_options": ["character_cake", "mini_cake", "scoop_cake"],
+      "constraints": ["avoid_too_many_small_characters"],
+      "retrieval_notes": "캐릭터와 미니 케이크 스타일을 참고하는 데모용 가게 프로필입니다."
+    },
+    {
+      "shop_id": "songbird",
+      "shop_name": "파티세리 송버드",
+      "location": "서울 강남구",
+      "style_keywords": ["fine_dessert", "seasonal", "elegant"],
+      "preferred_colors": ["cream", "fruit_color", "neutral_tone"],
+      "available_options": ["seasonal_dessert", "pavlova", "fruit_decoration"],
+      "constraints": ["seasonal_ingredients_may_change"],
+      "retrieval_notes": "파인 디저트와 시즌 디저트 중심으로 참고하는 데모용 가게 프로필입니다."
+    },
+    {
+      "shop_id": "cafe_sun",
+      "shop_name": "카페선",
+      "location": "김포 장기동",
+      "style_keywords": ["fruit_cake", "slice_cake", "seasonal_fruit"],
+      "preferred_colors": ["fresh_fruit_color", "cream", "green"],
+      "available_options": ["fruit_cake", "slice_cake", "seasonal_fruit"],
+      "constraints": ["fruit_availability_depends_on_season"],
+      "retrieval_notes": "제철 과일과 조각 케이크 스타일을 참고하는 데모용 가게 프로필입니다."
+    }
+  ]
+}

@@ -1,5 +1,9 @@
 {
   "order_id": "demo_001",
+  "shop_selection": {
+    "shop_id": "nuni_cake",
+    "shop_name": "누니케이크"
+  },
   "user_input": {
     "lettering_text": "HBD!",
     "size_and_flavor": "1호 / 바닐라시트 + 우유생크림",

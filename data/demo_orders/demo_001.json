@@ -1,5 +1,9 @@
 {
   "order_id": "demo_001",
+  "shop_selection": {
+    "shop_id": "nuni_cake",
+    "shop_name": "누니케이크"
+  },
   "user_input": {
     "lettering_text": "HBD!",
     "size_and_flavor": "1호 / 바닐라시트 + 우유생크림",
@@ -28,6 +32,64 @@
       ]
     }
   ],
+  "reference_attention": [
+    {
+      "image_id": "ref_001",
+      "selected_tags": [
+        "closest_result",
+        "color_reference"
+      ],
+      "attention_weights": {
+        "shape_weight": 0.62,
+        "color_weight": 0.8,
+        "decoration_weight": 0.5,
+        "style_weight": 0.62,
+        "composition_weight": 0.65
+      },
+      "attention_note": "선택 태그를 기반으로 어떤 시각 요소를 더 강하게 참고할지 정한 mock attention입니다."
+    },
+    {
+      "image_id": "ref_002",
+      "selected_tags": [
+        "decoration_reference"
+      ],
+      "attention_weights": {
+        "shape_weight": 0.35,
+        "color_weight": 0.45,
+        "decoration_weight": 0.9,
+        "style_weight": 0.55,
+        "composition_weight": 0.45
+      },
+      "attention_note": "선택 태그를 기반으로 어떤 시각 요소를 더 강하게 참고할지 정한 mock attention입니다."
+    }
+  ],
+  "retrieved_shop_context": {
+    "retrieval_query": "누니케이크",
+    "matched": true,
+    "shop_id": "nuni_cake",
+    "shop_name": "누니케이크",
+    "style_keywords": [
+      "heart_snow",
+      "simple",
+      "pastel",
+      "cute"
+    ],
+    "preferred_colors": [
+      "sky_blue",
+      "white",
+      "pastel_tone"
+    ],
+    "available_options": [
+      "heart_cake",
+      "lettering_cake",
+      "cream_piping"
+    ],
+    "constraints": [
+      "avoid_overly_complex_decoration",
+      "keep_design_simple"
+    ],
+    "retrieval_notes": "하트형, 파스텔톤, 심플한 디자인을 우선 참고하는 데모용 가게 프로필입니다."
+  },
   "reference_analysis": [
     {
       "image_id": "ref_001",
@@ -50,8 +112,8 @@
   "order_draft": {
     "product_type": "custom_cake",
     "design_basis": "closest_reference",
-    "store_template_name": "",
-    "composition_summary": "레퍼런스 이미지를 참고하되 그대로 복제하지 않고, 입력 요청을 바탕으로 주문 초안을 구성합니다.",
+    "store_template_name": "누니케이크",
+    "composition_summary": "레퍼런스 이미지를 참고하되 그대로 복제하지 않고, 태그별 attention과 가게 RAG context를 함께 반영해 주문 초안을 구성합니다.",
     "style": "kitsch",
     "main_colors": [
       "light_green"
@@ -74,6 +136,65 @@
     "event_context": "",
     "difficulty": "medium"
   },
+  "validation": {
+    "is_valid": true,
+    "missing_fields": []
+  },
+  "workflow_graph": {
+    "graph_style": "langgraph_ready_local_mock",
+    "nodes": [
+      "parse_user_input",
+      "compute_reference_attention",
+      "retrieve_shop_context",
+      "generate_order_draft",
+      "validate_order_draft"
+    ],
+    "edges": [
+      [
+        "parse_user_input",
+        "compute_reference_attention"
+      ],
+      [
+        "compute_reference_attention",
+        "retrieve_shop_context"
+      ],
+      [
+        "retrieve_shop_context",
+        "generate_order_draft"
+      ],
+      [
+        "generate_order_draft",
+        "validate_order_draft"
+      ]
+    ]
+  },
+  "workflow_trace": [
+    {
+      "node": "parse_user_input",
+      "status": "completed",
+      "description": "초기 입력 JSON에서 주문 입력, 가게 선택, 레퍼런스 metadata를 분리합니다."
+    },
+    {
+      "node": "compute_reference_attention",
+      "status": "completed",
+      "description": "선택 태그를 shape/color/decoration/style/composition weight로 변환합니다."
+    },
+    {
+      "node": "retrieve_shop_context",
+      "status": "completed",
+      "description": "선택한 가게명/id를 기준으로 로컬 RAG profile을 검색합니다."
+    },
+    {
+      "node": "generate_order_draft",
+      "status": "completed",
+      "description": "fallback mock으로 reference_analysis와 order_draft를 생성합니다."
+    },
+    {
+      "node": "validate_order_draft",
+      "status": "completed",
+      "description": "주문 초안의 필수 필드 누락 여부를 확인합니다."
+    }
+  ],
   "comfyui_prompt": {
     "positive": "single isolated custom cake, reference-inspired but not identical, unknown shaped cake, main colors: light green, decoration elements: strawberry 4pcs, lettering: top center lettering reading \"HBD!\", style and mood: clean custom cake style, clean 3D cake design mockup for order confirmation, semi-realistic but simplified, show only one cake body, isolated on a completely plain pure white background, no support object, no cake stand, no board, no plate, no tray, no table, no props",
     "negative": "cake stand, pedestal, support object, cake board, plate, tray, table, fabric background, cloth, props, extra objects, background objects, multiple cakes, hands, people, watermark, logo, blurry, low quality, gray studio background, gradient background, pattern background, product photography setup, oversized lettering, unreadable lettering, misspelled text, identical copy of the reference image, exact same layout, copied design"
