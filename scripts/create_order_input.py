@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-"""Create a demo O-nit order input JSON."""
-
 import argparse
 import json
 from pathlib import Path
@@ -29,18 +26,30 @@ def build_demo_input() -> dict[str, Any]:
             "shop_name": "누니케이크",
         },
         "user_input": {
-            "lettering_text": "HBD!",
+            "lettering_text": "HAPPY BIRTHDAY",
             "size_and_flavor": "1호 / 바닐라시트 + 우유생크림",
-            "additional_requests": "연두색 키치한 느낌, 딸기 4개, 너무 화려하지 않게",
+            "additional_requests": (
+                "레퍼런스 이미지의 원형 케이크 구도와 중앙 분홍색 곡선 배너를 유지하고, "
+                "문구는 HAPPY BIRTHDAY로 변경. "
+                "케이크 바탕은 하늘색, 별 장식은 파스텔톤 보라, 핑크, 하늘, 노랑, 연두색으로 배치. "
+                "배경은 완전한 흰색으로 정리하고, "
+                "풍선, 촛불, 가랜드, 선물상자, 리본, 파티 소품, 테이블, 트레이, 접시, 2단 케이크는 제외."
+            ),
         },
         "reference_metadata": [
             {
                 "image_id": "ref_001",
-                "image_path": "data/images/demo_001_reference_01.png",
+                "image_path": "data/images/raw/레터링:큐티2.jpeg",
                 "is_store_reference": False,
                 "is_closest_reference": True,
                 "reference_role": "closest_result",
-                "selected_tags": ["closest_result", "color_reference"],
+                "selected_tags": [
+                    "closest_result",
+                    "shape_reference",
+                    "color_reference",
+                    "decoration_reference",
+                    "composition_reference",
+                ],
             }
         ],
     }

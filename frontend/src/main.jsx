@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { createRoot } from "react-dom/client";
 import demo from "./data/demo_001.json";
-import generatedCake from "./assets/demo_001.png";
+import generatedCake from "./assets/onit_output.png";
 import referenceImage from "./assets/reference_ref_001.jpeg";
 import onitLogo from "./assets/onit-logo.svg";
 import popularVintageLovely from "./assets/popular_01.jpeg";
@@ -521,7 +521,13 @@ function CakeOrderApp() {
                 </button>
               </header>
               <div className={`preview-frame ${previewReady ? "ready" : ""}`}>
-                {previewReady ? <img src={generatedCake} alt="생성된 케이크 도안" /> : <strong>AI 도안 생성 중...</strong>}
+                {designGenerated && previewReady ? (
+                  <img src={generatedCake} alt="생성된 케이크 도안" />
+                ) : !previewReady ? (
+                  <strong>AI 도안 생성 중...</strong>
+                ) : (
+                  <strong>주문서 입력 후 도안을 만들어주세요</strong>
+                )}
               </div>
             </article>
 
