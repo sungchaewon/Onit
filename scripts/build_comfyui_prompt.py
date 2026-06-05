@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-"""Build ComfyUI SDXL + IPAdapter prompts from an O-nit order JSON."""
-
 import argparse
 import json
 from pathlib import Path

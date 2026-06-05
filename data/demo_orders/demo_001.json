@@ -5,9 +5,9 @@
     "shop_name": "누니케이크"
   },
   "user_input": {
-    "lettering_text": "HBD!",
+    "lettering_text": "HAPPY BIRTHDAY",
     "size_and_flavor": "1호 / 바닐라시트 + 우유생크림",
-    "additional_requests": "연두색 키치한 느낌, 너무 화려하지 않게"
+    "additional_requests": "레퍼런스 이미지의 원형 케이크 구도와 중앙 분홍색 곡선 배너를 유지하고, 문구는 HAPPY BIRTHDAY로 변경. 케이크 바탕은 하늘색, 별 장식은 파스텔톤 보라, 핑크, 하늘, 노랑, 연두색으로 배치. 배경은 완전한 흰색으로 정리하고, 풍선, 촛불, 가랜드, 선물상자, 리본, 파티 소품, 테이블, 트레이, 접시, 2단 케이크는 제외."
   },
   "reference_metadata": [
     {
@@ -18,47 +18,76 @@
       "reference_role": "closest_result",
       "selected_tags": [
         "closest_result",
-        "color_reference"
-      ]
-    },
-    {
-      "image_id": "ref_002",
-      "image_path": "data/images/레터링:키치:심플.jpeg",
-      "is_store_reference": false,
-      "is_closest_reference": false,
-      "reference_role": "decoration_reference",
-      "selected_tags": [
-        "decoration_reference"
+        "shape_reference",
+        "color_reference",
+        "decoration_reference",
+        "composition_reference"
       ]
     }
   ],
-  "reference_attention": [
-    {
-      "image_id": "ref_001",
-      "selected_tags": [
-        "closest_result",
-        "color_reference"
-      ],
-      "attention_weights": {
-        "shape_weight": 0.62,
-        "color_weight": 0.8,
-        "decoration_weight": 0.5,
-        "style_weight": 0.62,
-        "composition_weight": 0.65
-      },
-      "attention_note": "선택 태그를 기반으로 어떤 시각 요소를 더 강하게 참고할지 정한 mock attention입니다."
+  "reference_attention_policy": {
+    "description": "사용자가 고른 태그를 시각 요소별 참고 강도로 변환하기 위한 고정 mock policy입니다.",
+    "weight_keys": [
+      "shape_weight",
+      "color_weight",
+      "decoration_weight",
+      "style_weight",
+      "composition_weight"
+    ],
+    "default_weights": {
+      "shape_weight": 0.4,
+      "color_weight": 0.4,
+      "decoration_weight": 0.4,
+      "style_weight": 0.4,
+      "composition_weight": 0.4
     },
-    {
-      "image_id": "ref_002",
-      "selected_tags": [
-        "decoration_reference"
-      ],
-      "attention_weights": {
+    "tag_presets": {
+      "closest_result": {
+        "shape_weight": 0.9,
+        "color_weight": 0.7,
+        "decoration_weight": 0.65,
+        "style_weight": 0.75,
+        "composition_weight": 0.9
+      },
+      "color_reference": {
+        "shape_weight": 0.35,
+        "color_weight": 0.9,
+        "decoration_weight": 0.35,
+        "style_weight": 0.5,
+        "composition_weight": 0.4
+      },
+      "decoration_reference": {
         "shape_weight": 0.35,
         "color_weight": 0.45,
         "decoration_weight": 0.9,
         "style_weight": 0.55,
         "composition_weight": 0.45
+      },
+      "shop_style_reference": {
+        "shape_weight": 0.45,
+        "color_weight": 0.55,
+        "decoration_weight": 0.55,
+        "style_weight": 0.9,
+        "composition_weight": 0.55
+      }
+    }
+  },
+  "reference_attention": [
+    {
+      "image_id": "ref_001",
+      "selected_tags": [
+        "closest_result",
+        "shape_reference",
+        "color_reference",
+        "decoration_reference",
+        "composition_reference"
+      ],
+      "attention_weights": {
+        "shape_weight": 0.53,
+        "color_weight": 0.68,
+        "decoration_weight": 0.63,
+        "style_weight": 0.6,
+        "composition_weight": 0.58
       },
       "attention_note": "선택 태그를 기반으로 어떤 시각 요소를 더 강하게 참고할지 정한 mock attention입니다."
     }
@@ -97,15 +126,10 @@
       "summary": "fallback mock analysis; 실제 Gemini 분석 전 데모용 요약입니다.",
       "selected_tags": [
         "closest_result",
-        "color_reference"
-      ]
-    },
-    {
-      "image_id": "ref_002",
-      "reference_role": "decoration_reference",
-      "summary": "fallback mock analysis; 실제 Gemini 분석 전 데모용 요약입니다.",
-      "selected_tags": [
-        "decoration_reference"
+        "shape_reference",
+        "color_reference",
+        "decoration_reference",
+        "composition_reference"
       ]
     }
   ],
@@ -122,7 +146,7 @@
       "strawberry_4pcs"
     ],
     "has_lettering": true,
-    "lettering_text": "HBD!",
+    "lettering_text": "HAPPY BIRTHDAY",
     "lettering_position": "top_center",
     "lettering_color": "",
     "cake_shape": "unknown",
@@ -130,8 +154,23 @@
     "sheet_flavor": "바닐라시트",
     "filling_flavor": "우유생크림",
     "special_requests": [
-      "연두색 키치한 느낌",
-      "너무 화려하지 않게"
+      "레퍼런스 이미지의 원형 케이크 구도와 중앙 분홍색 곡선 배너를 유지하고",
+      "문구는 HAPPY BIRTHDAY로 변경. 케이크 바탕은 하늘색",
+      "별 장식은 파스텔톤 보라",
+      "핑크",
+      "하늘",
+      "노랑",
+      "연두색으로 배치. 배경은 완전한 흰색으로 정리하고",
+      "풍선",
+      "촛불",
+      "가랜드",
+      "선물상자",
+      "리본",
+      "파티 소품",
+      "테이블",
+      "트레이",
+      "접시",
+      "2단 케이크는 제외."
     ],
     "event_context": "",
     "difficulty": "medium"
@@ -196,7 +235,7 @@
     }
   ],
   "comfyui_prompt": {
-    "positive": "single isolated custom cake, reference-inspired but not identical, unknown shaped cake, main colors: light green, decoration elements: strawberry 4pcs, lettering: top center lettering reading \"HBD!\", style and mood: clean custom cake style, clean 3D cake design mockup for order confirmation, semi-realistic but simplified, show only one cake body, isolated on a completely plain pure white background, no support object, no cake stand, no board, no plate, no tray, no table, no props",
+    "positive": "single isolated custom cake, reference-inspired but not identical, unknown shaped cake, main colors: light green, decoration elements: strawberry 4pcs, lettering: top center lettering reading \"HAPPY BIRTHDAY\", style and mood: clean custom cake style, clean 3D cake design mockup for order confirmation, semi-realistic but simplified, show only one cake body, isolated on a completely plain pure white background, no support object, no cake stand, no board, no plate, no tray, no table, no props",
     "negative": "cake stand, pedestal, support object, cake board, plate, tray, table, fabric background, cloth, props, extra objects, background objects, multiple cakes, hands, people, watermark, logo, blurry, low quality, gray studio background, gradient background, pattern background, product photography setup, oversized lettering, unreadable lettering, misspelled text, identical copy of the reference image, exact same layout, copied design"
   }
 }

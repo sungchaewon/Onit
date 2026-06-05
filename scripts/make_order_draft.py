@@ -14,6 +14,14 @@ DEFAULT_INPUT_PATH = "data/demo_orders/demo_001_input.json"
 DEFAULT_OUTPUT_PATH = "data/demo_orders/demo_001.json"
 DEFAULT_SHOP_KNOWLEDGE_PATH = "data/rag/shop_profiles.json"
 
+DEFAULT_ATTENTION_WEIGHTS = {
+    "shape_weight": 0.4,
+    "color_weight": 0.4,
+    "decoration_weight": 0.4,
+    "style_weight": 0.4,
+    "composition_weight": 0.4,
+}
+
 TAG_ATTENTION_PRESETS = {
     "closest_result": {
         "shape_weight": 0.9,
@@ -119,16 +127,26 @@ def split_additional_requests(additional_requests: str) -> list[str]:
     ]
 
 
+def build_reference_attention_policy() -> dict[str, Any]:
+    """입력값과 무관하게 사용하는 태그별 attention 기준표를 반환합니다."""
+    return {
+        "description": "사용자가 고른 태그를 시각 요소별 참고 강도로 변환하기 위한 고정 mock policy입니다.",
+        "weight_keys": [
+            "shape_weight",
+            "color_weight",
+            "decoration_weight",
+            "style_weight",
+            "composition_weight",
+        ],
+        "default_weights": DEFAULT_ATTENTION_WEIGHTS,
+        "tag_presets": TAG_ATTENTION_PRESETS,
+    }
+
+
 def average_weights(weight_items: list[dict[str, float]]) -> dict[str, float]:
     """여러 태그의 attention weight를 평균 내어 이미지별 가중치로 만듭니다."""
     if not weight_items:
-        return {
-            "shape_weight": 0.4,
-            "color_weight": 0.4,
-            "decoration_weight": 0.4,
-            "style_weight": 0.4,
-            "composition_weight": 0.4,
-        }
+        return DEFAULT_ATTENTION_WEIGHTS
 
     keys = weight_items[0].keys()
     return {
@@ -335,6 +353,7 @@ def build_output(input_data: dict[str, Any], shop_knowledge: dict[str, Any]) -> 
         "shop_selection": input_data.get("shop_selection", {}),
         "user_input": input_data.get("user_input", {}),
         "reference_metadata": reference_metadata,
+        "reference_attention_policy": build_reference_attention_policy(),
         "reference_attention": reference_attention,
         "retrieved_shop_context": retrieved_shop_context,
         "reference_analysis": build_reference_analysis(reference_metadata),
